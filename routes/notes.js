@@ -31,7 +31,7 @@ router.post('/addnotes', [body("title", "Enter valid note title").isLength(3), b
         const notes = await Notes.create({
             title: req.body.title,
             description: req.body.description,
-            tag: req.body.tag,
+            tag: !req.body.tag ? 'General' : req.body.tag,
             user: req.user
         })
 

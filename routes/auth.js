@@ -30,14 +30,14 @@ router.post('/register', [body("name", "enter valid name").isLength(3), body("em
         });
 
         const token = jwt.sign({ id: user.id }, jwtSecretKey);
-        res.json(token);
+        res.status(200).json({status: 200, token: token});
 
     } catch(error) {
         console.log(error);
         if(error.errorResponse.code === 11000) {
-            return res.status(400).json("Already registered");
+            return res.status(400).json({status: 400, message: 'Credential is already registered'});
         }
-        res.status(500).json("Internal Server Error");
+        res.status(500).json({status: 500, message: "Internal Server Error"});
     }
 })
 
@@ -56,22 +56,22 @@ router.post('/login', [body("email", "enter valid email").isEmail(), body("passw
         const user = await User.findOne({email: req.body.email});
         console.log(user)
         if(!user) {
-            return res.status(400).json("Please enter valid credentials");
+            return res.status(400).json({status: 400, message: 'Please enter valid credentials'});
         }
 
         // checking entered password is matching with DB password
         const comparePassword = await bcrypt.compare(req.body.password, user.password);
         if(!comparePassword) {
-            return res.status(400).json("Please enter valid credentials");
+            return res.status(400).json({status: 400, message: 'Please enter valid credentials'});
         }
 
         // after all success generating token for login
         const token = jwt.sign({ id: user.id }, jwtSecretKey);
-        res.json(token);
+        res.status(200).json({status: 200, token: token});
 
     } catch (error) {
         console.log(error)
-        res.status(500).json("Internal Server Error");
+        res.status(500).json({status: 500, message: "Internal Server Error"});
     }
 })
 
